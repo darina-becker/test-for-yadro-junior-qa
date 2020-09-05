@@ -1,6 +1,8 @@
 #!/bin/bash
 
-exec 3>>${HOME}/file_error.log
+LOG_FILE="${HOME}/filemanager.log"
+
+exec 3>>$LOG_FILE
 
 log()
 {
@@ -36,7 +38,7 @@ create_dir ()
 		then
 			echo "Complete!"
 		else
-			echo "Oops, something went wrong. Check ${HOME}/file_error.log"
+			echo "Oops, something went wrong. Check ${LOG_FILE}"
 		fi
 	fi
 }
@@ -55,7 +57,7 @@ change_dir ()
 		cd $path_new_dir 2> >(log)
 		if [ $? -ne 0 ]
 		then
-			echo "Oops, something went wrong. Check ${HOME}/file_error.log"	
+			echo "Oops, something went wrong. Check ${LOG_FILE}"
 		fi
 	fi
 }
@@ -65,7 +67,7 @@ show_content ()
 	ls -la 2> >(log)
 	if [ $? -ne 0 ]
 	then
-		echo "Oops, something went wrong. Check ${HOME}/file_error.log"
+		echo "Oops, something went wrong. Check ${LOG_FILE}"
 	fi
 }
 
@@ -82,7 +84,7 @@ create_file ()
 		then
 			echo "Complete!"
 		else
-			echo "Oops, something went wrong. Check ${HOME}/file_error.log"
+			echo "Oops, something went wrong. Check ${LOG_FILE}"
 		fi
 	fi
 }
@@ -96,9 +98,9 @@ delete_file ()
 		echo "File $file_name_del will be deleted! Continue? (yes/no)"
 		while true
 		do
-			read answer # need to convert to lower-case
+			read answer
 			answer="$(echo $answer | tr '[:upper:]' '[:lower:]')"
-			if [[ $answer == "yes" || $answer == "y" ]] # need hadle wrong input !!!!!!!
+			if [[ $answer == "yes" || $answer == "y" ]]
 			then
 				rm $file_name_del 2> >(log)
 				if [ $? -eq 0 ]
@@ -106,7 +108,7 @@ delete_file ()
 					echo "Complete!"
 					break
 				else
-					echo "Oops, something went wrong. Check ${HOME}/file_error.log"
+					echo "Oops, something went wrong. Check ${LOG_FILE}"
 					break
 				fi
 			elif [[ $answer == "no" || $answer == "n" ]]
@@ -119,9 +121,9 @@ delete_file ()
 		done
 	elif [[ -d $file_name_del ]]
 	then
-		echo "$file_name_del is a directory"
+		echo "'$file_name_del' is a directory"
 	else
-		echo "$file_name_del does not exist"
+		echo "'$file_name_del' does not exist"
 	fi
 }
 
@@ -163,7 +165,7 @@ do
 			delete_file
 			;;
 		6)
-			echo "bye"
+			echo "Bye!"
 			break
 			;;
 		*)
@@ -172,5 +174,3 @@ do
 		esac
 	fi
 done
-
-
